@@ -15,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/niveis")
@@ -61,5 +65,25 @@ public class NivelController {
         @Parameter(description = "ID do nível a ser buscado") 
         @PathVariable Integer id) {
         return ResponseEntity.ok(nivelService.findById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNivelById(
+        @Parameter(description = "ID do nível a ser deletado") 
+        @PathVariable Integer id) {
+        nivelService.deleteNivel(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar nível", description = "Atualiza um nível existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Nível atualizado com sucesso",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Nivel.class)) }),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
+        @ApiResponse(responseCode = "404", description = "Nível não encontrado")
+    })
+    public ResponseEntity<Nivel> putMethodName(@PathVariable Integer id, @RequestBody NivelForm form) {
+        return ResponseEntity.ok(nivelService.updateNivel(form, id));
     }
 }

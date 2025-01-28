@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class Opcao {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "opcao_id")
     private Integer opcaoId;
     
@@ -25,6 +26,10 @@ public class Opcao {
     @ManyToOne
     @JoinColumn(name = "pergunta_id", nullable = false)
     private Pergunta pergunta;
+
+    private Boolean ativo = false;
+
+    private Integer ordem;
 
     
     

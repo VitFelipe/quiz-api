@@ -35,4 +35,18 @@ public class NivelService {
         return nivelRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Nível não encontrado"));
     }
+
+    @Transactional
+    public void deleteNivel(Integer id) {
+        nivelRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Nivel updateNivel(NivelForm form, Integer id) {
+        Nivel nivel = findById(id);
+        nivel.setNome(form.getNome());
+        nivel.setDescricao(form.getDescricao());
+        nivel.setTempoMaximoResposta(form.getTempoMaximoResposta());
+        return nivelRepository.save(nivel);
+    }
 }

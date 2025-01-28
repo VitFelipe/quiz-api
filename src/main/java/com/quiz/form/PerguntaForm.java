@@ -12,8 +12,10 @@ public class PerguntaForm {
     @NotBlank(message = "A descrição da pergunta é obrigatória")
     private String descricaoPergunta;
     
-    @NotNull(message = "O nível é obrigatório")
-    private Integer nivelId;
+    @NotNull(message = "O assunto é obrigatório")
+    private Integer assuntoId;
+    
+    private Boolean ativo;
     
     private String descricaoResposta;
     
@@ -28,5 +30,7 @@ public class PerguntaForm {
         
         @NotNull(message = "É necessário informar se a opção é correta")
         private Boolean opcaoCorreta;
+
+        private Integer ordem;
     }
 }

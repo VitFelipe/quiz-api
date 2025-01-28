@@ -56,7 +56,7 @@ public class JogoService {
         Jogo jogo = jogoRepository.findById(form.getJogoId())
             .orElseThrow(() -> new EntityNotFoundException("Jogo não encontrado"));
             
-        Pergunta pergunta = perguntaService.findById(form.getPerguntaId());
+        Pergunta pergunta = perguntaService.findByIdEntity(form.getPerguntaId());
         
         RespostaJogo resposta = new RespostaJogo();
         resposta.setPergunta(pergunta);
