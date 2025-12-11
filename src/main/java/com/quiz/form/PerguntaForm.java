@@ -20,7 +20,7 @@ public class PerguntaForm {
     private String descricaoResposta;
     
     @NotNull(message = "É necessário informar pelo menos duas opções")
-    @Size(min = 2, message = "É necessário informar pelo menos duas opções")
+    @Size(min = 1, message = "É necessário informar pelo menos duas opções")
     private List<OpcaoForm> opcoes;
     
     @Data
@@ -32,5 +32,6 @@ public class PerguntaForm {
         private Boolean opcaoCorreta;
 
         private Integer ordem;
+    
     }
 }

@@ -1,7 +1,9 @@
 package com.quiz.form;
 
+import com.quiz.enums.PerfilEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -21,6 +23,6 @@ public class UsuarioForm {
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String senha;
     
-    @Size(max = 45, message = "O perfil deve ter no máximo 45 caracteres")
-    private String perfil;
+    @NotNull(message = "O perfil é obrigatório")
+    private PerfilEnum perfil;
 }

@@ -1,11 +1,20 @@
 package com.quiz.model;
 
+import com.quiz.enums.PerfilEnum;
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "usuario")
 public class Usuario {
     
@@ -20,8 +29,9 @@ public class Usuario {
     @Column(name = "email", length = 85, nullable = false, unique = true)
     private String email;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "perfil", length = 45)
-    private String perfil;
+    private PerfilEnum perfil;
     
     @Column(name = "senha", length = 155)
     private String senha;

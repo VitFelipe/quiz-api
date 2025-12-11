@@ -15,7 +15,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +32,12 @@ public class PerguntaService {
     private final OpcaoRepository opcaoRepository;
     private final UsuarioService usuarioService;
     
+    @Transactional
+    public void createPerguntasIA(List<PerguntaForm> forms) {
+        forms.forEach(form -> createPergunta(form));
+    }
+
+
     @Transactional
     public PerguntaComOpcaoResponse createPergunta(PerguntaForm form) {
         Assunto assunto = assuntoRepository.findById(form.getAssuntoId())

@@ -27,7 +27,7 @@ public class Opcao {
     @JoinColumn(name = "pergunta_id", nullable = false)
     private Pergunta pergunta;
 
-    private Boolean ativo = false;
+    private Boolean ativo = true;
 
     private Integer ordem;
 

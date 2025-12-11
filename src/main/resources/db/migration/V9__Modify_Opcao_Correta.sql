@@ -1,1 +1,1 @@
-ALTER TABLE quiz_aleitamento.opcao MODIFY COLUMN opcao_correta boolean NULL;
+ALTER TABLE quiz_aleitamento.opcao MODIFY COLUMN opcao_correta boolean  null;

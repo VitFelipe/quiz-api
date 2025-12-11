@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/opcoes")
+@RequestMapping("/opcoes")
 @Tag(name = "Opções", description = "Endpoints para gerenciamento das opções de resposta do quiz")
 public class OpcaoController {
 

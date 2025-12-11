@@ -1,0 +1,2 @@
+ALTER TABLE quiz_aleitamento.pergunta_jogo ADD pergunta_id INT NULL;
+ALTER TABLE quiz_aleitamento.pergunta_jogo ADD CONSTRAINT pergunta_jogo_pergunta_FK FOREIGN KEY (pergunta_id) REFERENCES quiz_aleitamento.pergunta(pergunta_id);

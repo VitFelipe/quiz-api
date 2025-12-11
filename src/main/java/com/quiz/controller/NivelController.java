@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
-@RequestMapping("/api/niveis")
+@RequestMapping("/niveis")
 @Tag(name = "Níveis", description = "Endpoints para gerenciamento dos níveis do quiz")
 public class NivelController {
 

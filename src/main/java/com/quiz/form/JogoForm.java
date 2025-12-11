@@ -9,6 +9,4 @@ public class JogoForm {
     @NotNull(message = "O nível é obrigatório")
     private Integer nivelId;
     
-    @NotNull(message = "O usuário é obrigatório")
-    private Integer usuarioId;
 }

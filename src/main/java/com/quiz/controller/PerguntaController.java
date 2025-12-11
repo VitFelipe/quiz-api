@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
-@RequestMapping("/api/perguntas")
+@RequestMapping("/perguntas")
 @Tag(name = "Perguntas", description = "Endpoints para gerenciamento das perguntas do quiz")
 @RequiredArgsConstructor
 @Log4j2
@@ -47,12 +47,28 @@ public class PerguntaController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
         @ApiResponse(responseCode = "404", description = "Assunto não encontrado")
     })
-    @PostMapping
+
+    @PostMapping()
     public ResponseEntity<PerguntaComOpcaoResponse> createPergunta(
         @Parameter(description = "Dados da pergunta a ser criada") 
         @Valid @RequestBody PerguntaForm form) {
         PerguntaComOpcaoResponse pergunta = perguntaService.createPergunta(form);
         return ResponseEntity.ok(pergunta);
+    }
+
+    @Operation(summary = "Criar nova pergunta", description = "Cria uma nova pergunta no sistema do quiz")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Pergunta criada com sucesso",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PerguntaComOpcaoResponse.class)) }),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
+        @ApiResponse(responseCode = "404", description = "Assunto não encontrado")
+    })
+    @PostMapping("/ia")
+    public ResponseEntity<PerguntaComOpcaoResponse> createPerguntasIA(
+        @Parameter(description = "Lista de perguntas a serem criadas") 
+        @Valid @RequestBody List<PerguntaForm> forms) {
+         perguntaService.createPerguntasIA(forms);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Buscar perguntas por assunto", description = "Retorna todas as perguntas de um assunto específico")

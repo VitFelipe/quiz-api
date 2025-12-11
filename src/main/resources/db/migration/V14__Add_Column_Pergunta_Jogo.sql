@@ -1,0 +1,1 @@
+ALTER TABLE quiz_aleitamento.pergunta_jogo ADD pontos NUMERIC NULL;

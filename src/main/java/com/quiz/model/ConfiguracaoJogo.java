@@ -14,4 +14,7 @@ public class ConfiguracaoJogo {
     
     @Column(name = "numero_maximo_perguntas")
     private Integer numeroMaximoPerguntas;
+
+    private String templatePrompt;
+    
 }

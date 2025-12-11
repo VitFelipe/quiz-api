@@ -1,0 +1,4 @@
+ALTER TABLE quiz_aleitamento.configuracao_jogo ADD template_prompt LONGTEXT NULL;
+INSERT INTO quiz_aleitamento.configuracao_jogo
+(idconfiguracao_jogo, numero_maximo_perguntas, template_prompt)
+VALUES(1, 10, 'crie um quiz com {quantidade} perguntas  sobre {assunto} nível {nivel} e me retorne em um formato json seguindo esse padrão public class PerguntaForm {.    private String descricaoPergunta;    private Boolean ativo;    private String descricaoResposta;    private List<OpcaoForm> opcoes;    public static class OpcaoForm {       private String descricao;       private Boolean opcaoCorreta;        private Integer ordem;    } retorne apenas o json  ');

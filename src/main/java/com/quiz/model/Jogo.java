@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -20,7 +21,7 @@ public class Jogo {
     
     @NotNull(message = "A pontuação é obrigatória")
     @Column(name = "pontos", nullable = false)
-    private Float pontos;
+    private Double pontos;
     
     @NotNull(message = "O ranking é obrigatório")
     @Column(name = "ranking", length = 45, nullable = false)
@@ -36,6 +37,21 @@ public class Jogo {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
     
-    @Column(name = "jogocol")
-    private LocalDateTime jogocol;
+    private LocalDateTime dataFim;
+
+    @OneToMany(mappedBy = "jogo" ,cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<PerguntaJogo> perguntas;
+
+
+    public void incrementarPontos(Double pontos) {
+        this.pontos += pontos;
+    }
+
+    public void finalizarJogo() {
+        this.dataFim = LocalDateTime.now();
+    }
+
+    public void adiconarPontos(Double pontos) {
+        this.pontos = pontos;
+    }
 }

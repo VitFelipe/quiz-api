@@ -1,9 +1,11 @@
 package com.quiz.controller;
 
 import com.quiz.form.JogoForm;
-import com.quiz.form.RespostaJogoForm;
 import com.quiz.model.Jogo;
-import com.quiz.model.RespostaJogo;
+import com.quiz.response.JogoComPerguntasResponse;
+import com.quiz.response.JogosUsuarioSimplificadoResponse;
+import com.quiz.response.ResumoJogoResponse;
+import com.quiz.response.ResumoJogosResponse;
 import com.quiz.service.JogoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,9 +20,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
-@RequestMapping("/api/jogos")
+@RequestMapping("/jogos")
 @Tag(name = "Jogos", description = "Endpoints para gerenciamento dos jogos do quiz")
 public class JogoController {
 
@@ -35,27 +41,27 @@ public class JogoController {
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PostMapping
-    public ResponseEntity<Jogo> iniciarJogo(
+    public ResponseEntity<JogoComPerguntasResponse> iniciarJogo(
         @Parameter(description = "Dados para iniciar o jogo") 
         @Valid @RequestBody JogoForm form) {
-        Jogo jogo = jogoService.iniciarJogo(form);
-        return ResponseEntity.ok(jogo);
+        JogoComPerguntasResponse jogoResponse = jogoService.iniciarJogo(form);
+        return ResponseEntity.ok(jogoResponse);
+    }
+
+    @Operation(summary = "Finalizar jogo", description = "Finaliza uma sessão de jogo")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Jogo finalizado com sucesso",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Jogo.class)) }),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
+        @ApiResponse(responseCode = "404", description = "Jogo não encontrado")
+    })
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<ResumoJogoResponse> finalizar(@Parameter(description = "ID do jogo a ser finalizado") @PathVariable Integer id) {
+         ResumoJogoResponse resumo =  jogoService.finalizarJogo(id);
+        return ResponseEntity.ok(resumo);
     }
     
-    @Operation(summary = "Responder pergunta", description = "Registra a resposta do usuário para uma pergunta do quiz")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Resposta registrada com sucesso",
-            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespostaJogo.class)) }),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
-        @ApiResponse(responseCode = "404", description = "Jogo ou pergunta não encontrados")
-    })
-    @PostMapping("/resposta")
-    public ResponseEntity<RespostaJogo> responderPergunta(
-        @Parameter(description = "Dados da resposta do usuário") 
-        @Valid @RequestBody RespostaJogoForm form) {
-        RespostaJogo resposta = jogoService.responderPergunta(form);
-        return ResponseEntity.ok(resposta);
-    }
+
     
     @Operation(summary = "Listar ranking por nível", description = "Retorna o ranking dos jogos por nível")
     @ApiResponses(value = {
@@ -83,5 +89,23 @@ public class JogoController {
         @PathVariable Integer usuarioId) {
         List<Jogo> jogos = jogoService.getJogosByUsuario(usuarioId);
         return ResponseEntity.ok(jogos);
+    }
+
+
+    @Operation(summary = "Estatísticas de jogos", description = "Retorna Estatísticas de jogos de um usuário")
+    @GetMapping("/estatisticas/{usuarioId}")
+    public ResponseEntity<ResumoJogosResponse> getResumoJogosByUsuario(
+        @Parameter(description = "ID do usuário") 
+        @PathVariable Integer usuarioId) {
+        ResumoJogosResponse resumo = jogoService.getEstatisticasJogosByUsuario(usuarioId);
+        return ResponseEntity.ok(resumo);
+    }
+
+    @Operation(summary = "Listar resumos de jogos", description = "Retorna uma lista com os resumos de jogos de um usuário")
+    @GetMapping("/lista-resumos/{usuarioId}")
+    public ResponseEntity<List<JogosUsuarioSimplificadoResponse>> getListResumo(
+        @Parameter(description = "ID do usuário") 
+        @PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(jogoService.getListResumo(usuarioId));
     }
 }

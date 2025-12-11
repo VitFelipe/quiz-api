@@ -30,4 +30,18 @@ public interface PerguntaRepository extends JpaRepository<Pergunta, Integer> {
         @Param("nivelId") Integer nivelId,
         Pageable pageable
     );
+
+    @Query(value = """
+    
+select p.* from quiz_aleitamento.pergunta p
+inner join quiz_aleitamento.assunto a on a.assunto_id  = p.assunto_id 
+inner join quiz_aleitamento.nivel n on n.nivel_id  = a.nivel_id 
+left join (select pergunta_id , count(*) as total from quiz_aleitamento.pergunta_jogo pj 
+group by pergunta_id ) pg_total on pg_total.pergunta_id = p.pergunta_id 
+where 
+a.nivel_id = :nivelId  
+order by pg_total.total asc
+LIMIT :quantidadeMaxima
+    """,nativeQuery = true)
+List<Pergunta> findByNivelNivelIdOrderByPerguntaId(@Param("nivelId") Integer nivelId, @Param("quantidadeMaxima") Integer quantidadeMaxima);  
 }
