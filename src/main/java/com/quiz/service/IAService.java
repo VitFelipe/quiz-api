@@ -29,7 +29,7 @@ public class IAService {
 
     public List<PerguntaForm> generateQuiz(Integer assuntoId, Integer quantidadePerguntas) {
       Assunto assunto =  assuntoRepository.findById(assuntoId)
-        .orElseThrow(() -> new EntityNotFoundException("Assunto nao encontrado"));
+        .orElseThrow(() -> new EntityNotFoundException("Assunto não encontrado"));
     String content = chatClient.prompt().
     user(getBuildTextPrompt(assunto.getNivel().getNome(), assunto.getNome(), quantidadePerguntas)).call()
     .content();
