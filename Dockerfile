@@ -27,6 +27,14 @@ USER spring:spring
 # Copy the built JAR from build stage
 COPY --from=build /app/target/quiz-aleitamento-*.jar app.jar
 
+# Environment variables
+ENV DB_URL=${DB_URL}
+ENV DB_USERNAME=${DB_USERNAME}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+ENV GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+ENV OPENAI_API_KEY=${OPENAI_API_KEY}}
+
 # Expose the port the app runs on
 EXPOSE 8080
 
