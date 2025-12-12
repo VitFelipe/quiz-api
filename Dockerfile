@@ -27,6 +27,7 @@ COPY --from=build /app/target/quiz-aleitamento-*.jar app.jar
 
 # Environment variables
 ENV DB_URL=${DB_URL}
+ENV FLYWAY_ENABLED=${FLYWAY_ENABLED}
 ENV DB_USERNAME=${DB_USERNAME}
 ENV DB_PASSWORD=${DB_PASSWORD}
 ENV GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
