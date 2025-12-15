@@ -15,6 +15,6 @@ public interface PerguntaJogoRepository extends JpaRepository<PerguntaJogo, Inte
 
     @Modifying
     @Transactional
-    @Query(value="update quiz_aleitamento.pergunta_jogo set resposta_correta = :resposta, pontos = :pontos where pergunta_jogo_id = :perguntaJogoId", nativeQuery = true)
+    @Query(value="update quiz.pergunta_jogo set resposta_correta = :resposta, pontos = :pontos where pergunta_jogo_id = :perguntaJogoId", nativeQuery = true)
      void atualizarPerguntaComResposta(@Param("resposta") Boolean resposta, @Param("pontos") Double pontos, @Param("perguntaJogoId") Integer perguntaJogoId);
 }

@@ -33,10 +33,10 @@ public interface PerguntaRepository extends JpaRepository<Pergunta, Integer> {
 
     @Query(value = """
     
-select p.* from quiz_aleitamento.pergunta p
-inner join quiz_aleitamento.assunto a on a.assunto_id  = p.assunto_id 
-inner join quiz_aleitamento.nivel n on n.nivel_id  = a.nivel_id 
-left join (select pergunta_id , count(*) as total from quiz_aleitamento.pergunta_jogo pj 
+select p.* from quiz.pergunta p
+inner join quiz.assunto a on a.assunto_id  = p.assunto_id 
+inner join quiz.nivel n on n.nivel_id  = a.nivel_id 
+left join (select pergunta_id , count(*) as total from quiz.pergunta_jogo pj 
 group by pergunta_id ) pg_total on pg_total.pergunta_id = p.pergunta_id 
 where 
 a.nivel_id = :nivelId  

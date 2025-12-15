@@ -19,9 +19,9 @@ j.`data` ,
 n.nome as nivel , 
 count(*) totalPerguntas, 
 sum(case when pj.resposta_correta = true then 1 else 0 end ) as totalAcertos
-from quiz_aleitamento.jogo j 
-inner join quiz_aleitamento.pergunta_jogo pj on j.jogo_id  = pj.jogo_id 
-inner join quiz_aleitamento.nivel n on n.nivel_id  = j.nivel_id 
+from quiz.jogo j 
+inner join quiz.pergunta_jogo pj on j.jogo_id  = pj.jogo_id 
+inner join quiz.nivel n on n.nivel_id  = j.nivel_id 
 where 
 j.usuario_id  = #{usuarioId}
 group by j.jogo_id  , j.`data` , n.nome order by j.`data` desc
@@ -39,8 +39,8 @@ group by j.jogo_id  , j.`data` , n.nome order by j.`data` desc
 	select 
 	( sum(case when resposta_correta = true then 1 else 0 end ) / count(*))  as taxa_acerto_medio
 	from
-	quiz_aleitamento.jogo j 
-	inner join quiz_aleitamento.pergunta_jogo pj 
+	quiz.jogo j 
+	inner join quiz.pergunta_jogo pj 
 	on j.jogo_id  = pj.jogo_id 
 	where 
 	j.usuario_id  = #{usuarioId} 

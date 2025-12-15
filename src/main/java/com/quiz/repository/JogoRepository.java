@@ -21,7 +21,7 @@ public interface JogoRepository extends JpaRepository<Jogo, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update quiz_aleitamento.jogo set pontos = :pontos where jogo_id = :jogoId", nativeQuery = true)
+    @Query(value = "update quiz.jogo set pontos = :pontos where jogo_id = :jogoId", nativeQuery = true)
     void atualizarPontos(@Param("pontos") Float pontos, @Param("jogoId") Integer jogoId);
 
     @Query(value = """
@@ -31,7 +31,7 @@ public interface JogoRepository extends JpaRepository<Jogo, Integer> {
             	sum(case when pj.resposta_correta = true then 1 else 0 end) as totalAcertos,
             	sum(case when pj.resposta_correta = false then 1 else 0 end) as totalErros
             from
-            	quiz_aleitamento.pergunta_jogo pj
+            	quiz.pergunta_jogo pj
             where
             	pj.jogo_id = :jogoId
                         """, nativeQuery = true)
@@ -41,7 +41,7 @@ public interface JogoRepository extends JpaRepository<Jogo, Integer> {
                         select
             	count(*) as totalJogos, avg(j.pontos) as mediaPontos
             from
-            	quiz_aleitamento.jogo j
+            	quiz.jogo j
             where
             	j.usuario_id = :usuarioId
                         """, nativeQuery = true)
