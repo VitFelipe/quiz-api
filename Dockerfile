@@ -25,6 +25,15 @@ USER spring:spring
 
 COPY --from=build /app/target/quiz-aleitamento-*.jar app.jar
 
+#Args
+ARG DB_URL
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG FLYWAY_ENABLED
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG OPENAI_API_KEY
+
 # Environment variables
 ENV DB_URL=${DB_URL}
 ENV FLYWAY_ENABLED=${FLYWAY_ENABLED}
