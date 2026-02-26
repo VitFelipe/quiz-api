@@ -5,21 +5,18 @@ WORKDIR /app
 # Instalar dependências necessárias para o build nativo no Oracle Linux (base da imagem Graal)
 # O Spring Boot e o Quarkus precisam de bibliotecas de desenvolvimento do sistema
 USER root
-RUN microdnf install findutils -y
+# Instalar o maven no container
+RUN microdnf install maven -y
 
-# Copiar apenas o pom.xml para aproveitar o cache de camadas do Docker
+# Copiar apenas o pom.xml primeiro (mantendo o cache do Docker)
 COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
+
+# Copiar o código fonte
 COPY src ./src
 
-# Dar permissão de execução ao Maven Wrapper (se estiver usando)
-RUN chmod +x mvnw
+# Build da imagem nativa usando o 'mvn' puro que instalamos acima
+RUN mvn native:compile -Pnative -DskipTests
 
-# Build da imagem nativa
-# Para Spring Boot use: -Pnative
-# Para Quarkus use: -Dquarkus.package.type=native
-RUN ./mvnw native:compile -Pnative -DskipTests
 
 # Stage 2: Runtime Stage (Imagem extremamente leve)
 # Não precisamos de JDK/JRE, apenas de uma imagem com as libs básicas do SO (distroless é o ideal)
