@@ -1,0 +1,57 @@
+# Stage 1: Build Nativo com GraalVM
+FROM ghcr.io/graalvm/native-image-community:17 AS build
+WORKDIR /app
+
+# Instalar dependências necessárias para o build nativo no Oracle Linux (base da imagem Graal)
+# O Spring Boot e o Quarkus precisam de bibliotecas de desenvolvimento do sistema
+USER root
+RUN microdnf install findutils -y
+
+# Copiar apenas o pom.xml para aproveitar o cache de camadas do Docker
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw .
+COPY src ./src
+
+# Dar permissão de execução ao Maven Wrapper (se estiver usando)
+RUN chmod +x mvnw
+
+# Build da imagem nativa
+# Para Spring Boot use: -Pnative
+# Para Quarkus use: -Dquarkus.package.type=native
+RUN ./mvnw native:compile -Pnative -DskipTests
+
+# Stage 2: Runtime Stage (Imagem extremamente leve)
+# Não precisamos de JDK/JRE, apenas de uma imagem com as libs básicas do SO (distroless é o ideal)
+FROM debian:bookworm-slim
+WORKDIR /app
+
+# Criar usuário não-root para segurança
+RUN addgroup --system spring && adduser --system spring --ingroup spring
+USER spring:spring
+
+# Copiar o binário gerado no estágio anterior
+# O nome do binário geralmente é o 'artifactId' definido no pom.xml
+COPY --from=build /app/target/quiz-aleitamento-app /app/app
+
+# Variáveis de ambiente (mantidas conforme seu original)
+ARG DB_URL
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG FLYWAY_ENABLED
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG OPENAI_API_KEY
+
+ENV DB_URL=${DB_URL} \
+    FLYWAY_ENABLED=${FLYWAY_ENABLED} \
+    DB_USERNAME=${DB_USERNAME} \
+    DB_PASSWORD=${DB_PASSWORD} \
+    GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
+    GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+    OPENAI_API_KEY=${OPENAI_API_KEY}
+
+EXPOSE 8080
+
+# No modo nativo, executamos o binário diretamente, sem "java -jar"
+ENTRYPOINT ["./app"]
