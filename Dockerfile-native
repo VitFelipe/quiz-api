@@ -2,8 +2,6 @@
 FROM ghcr.io/graalvm/native-image-community:17 AS build
 WORKDIR /app
 
-# Instalar dependências necessárias para o build nativo no Oracle Linux (base da imagem Graal)
-# O Spring Boot e o Quarkus precisam de bibliotecas de desenvolvimento do sistema
 USER root
 # Instalar o maven no container
 RUN microdnf install maven -y
@@ -14,24 +12,8 @@ COPY pom.xml .
 # Copiar o código fonte
 COPY src ./src
 
-# Build da imagem nativa usando o 'mvn' puro que instalamos acima
-RUN mvn native:compile -Pnative -DskipTests
-
-
-# Stage 2: Runtime Stage (Imagem extremamente leve)
-# Não precisamos de JDK/JRE, apenas de uma imagem com as libs básicas do SO (distroless é o ideal)
-FROM debian:bookworm-slim
-WORKDIR /app
-
-# Criar usuário não-root para segurança
-RUN addgroup --system spring && adduser --system spring --ingroup spring
-USER spring:spring
-
-# Copiar o binário gerado no estágio anterior
-# O nome do binário geralmente é o 'artifactId' definido no pom.xml
-COPY --from=build /app/target/quiz-aleitamento-app /app/app
-
-# Variáveis de ambiente (mantidas conforme seu original)
+# 1. DECLARAR OS ARGs NO STAGE DE BUILD
+# Isso permite que o Dokploy injete os valores neste estágio
 ARG DB_URL
 ARG DB_USERNAME
 ARG DB_PASSWORD
@@ -40,6 +22,41 @@ ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
 ARG OPENAI_API_KEY
 
+# 2. PASSAR OS ARGs PARA O MAVEN
+# O Spring AOT vai usar esses valores para preencher as variáveis do application.properties durante a compilação
+RUN mvn native:compile -Pnative -DskipTests \
+    -DDB_URL="${DB_URL}" \
+    -DDB_USERNAME="${DB_USERNAME}" \
+    -DDB_PASSWORD="${DB_PASSWORD}" \
+    -DFLYWAY_ENABLED="${FLYWAY_ENABLED}" \
+    -DGOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}" \
+    -DGOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
+    -DOPENAI_API_KEY="${OPENAI_API_KEY}"
+
+
+# Stage 2: Runtime Stage (Imagem extremamente leve)
+FROM debian:bookworm-slim
+WORKDIR /app
+
+# Criar usuário não-root para segurança
+RUN addgroup --system spring && adduser --system spring --ingroup spring
+USER spring:spring
+
+# Copiar o binário gerado no estágio anterior
+# Atenção: verifique se o nome gerado é 'quiz-aleitamento' ou 'quiz-aleitamento-app'
+COPY --from=build /app/target/quiz-aleitamento /app/app
+
+# 3. REDECLARAR OS ARGs NO STAGE DE RUNTIME
+# Como mudamos de Stage, os ARGs anteriores "sumiram". Precisamos deles de novo para as ENVs.
+ARG DB_URL
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG FLYWAY_ENABLED
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG OPENAI_API_KEY
+
+# Variáveis de ambiente
 ENV DB_URL=${DB_URL} \
     FLYWAY_ENABLED=${FLYWAY_ENABLED} \
     DB_USERNAME=${DB_USERNAME} \
@@ -50,5 +67,5 @@ ENV DB_URL=${DB_URL} \
 
 EXPOSE 8080
 
-# No modo nativo, executamos o binário diretamente, sem "java -jar"
+# No modo nativo, executamos o binário diretamente
 ENTRYPOINT ["./app"]
